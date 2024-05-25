@@ -1,0 +1,16 @@
+.ant-carousel .slick-arrow {
+    top: 50%;
+    /* Đưa mũi tên lên giữa của Carousel */
+    transform: translateY(-50%);
+    /* Dịch chuyển mũi tên lên trên 50% của chính nó */
+}
+
+.ant-carousel .slick-prev {
+    left: 0;
+    /* Đặt mũi tên "Previous" ở bên trái */
+}
+
+.ant-carousel .slick-next {
+    right: 0;
+    /* Đặt mũi tên "Next" ở bên phải */
+}
