@@ -11,39 +11,10 @@ import AppFooter from './layouts/Footer/AppFooter';
 import MovieDetail from './pages/MovieDetail/MovieDetail';
 import SeatSelection from './pages/SeatSelection/SeatSelection';
 import Bill from './pages/Bill/Bill';
+import SaveBill from './pages/SaveBill/Savebill';
+
+import Schedules from './pages/Schedules/Schedules';
 const { Content, Footer } = Layout;
-
-// function App() {
-
-//   return (
-//     <BrowserRouter>
-//     <Layout >
-//       <NavBar />
-//       <Content>
-//           <Routes>
-//             <Route path='/login' element={<Login/>}/>
-//             <Route path='/signup' element={<SignUp/>}/>
-//             <Route path='/' element={<Home/>}/>
-//             <Route path='movie/:id' element={<MovieDetail/>}/>
-//             <Route path='seat-selection/:id' element={<SeatSelection/>}/>
-//             <Route path='bill' element={<Bill/>}/>
-//               {/* <Route index element={<Dashboard />} />
-//               <Route path='products' element={<ProductPage/>}/>  */}
-            
-//           </Routes>
-//       </Content>
-
-//       <Footer style={{ backgroundColor: 'rgb(8, 5, 5)' }}>
-//         <AppFooter />
-//       </Footer>
-      
-//     </Layout>
-//     </BrowserRouter>
-//   );
-
-// }
-
-// export default App;
 
 
 const App = () => {
@@ -60,7 +31,7 @@ function AppContent() {
 
   // Kiểm tra nếu đường dẫn là '/login' hoặc '/signup', ẩn NavBar và Footer
   useEffect(() => {
-    if (location.pathname === '/login' || location.pathname === '/signup') {
+    if (location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/savebill') {
       setHideNavAndFooter(true);
     } else {
       setHideNavAndFooter(false);
@@ -77,7 +48,9 @@ function AppContent() {
           <Route path='/' element={<Home />} />
           <Route path='movie/:id' element={<MovieDetail />} />
           <Route path='seat-selection/:id' element={<SeatSelection />} />
-          <Route path='bill' element={<Bill />} />
+          <Route path='schedules' element={<Schedules />} />
+          <Route path='my-bill' element={<Bill />} />
+          <Route path='savebill' element={<SaveBill />} />
         </Routes>
       </Content>
       {!hideNavAndFooter && (

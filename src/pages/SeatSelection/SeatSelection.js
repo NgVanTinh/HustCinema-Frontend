@@ -1,23 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Box, Grid, Checkbox, Button, FormControlLabel, Typography, Modal } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Box, Grid, Checkbox, Button, Typography } from '@mui/material';
 import axios from 'axios';
 import ChairIcon from '@mui/icons-material/Chair';
 import Divider from '@mui/material/Divider';
-import CancelIcon from '@mui/icons-material/Cancel';
-
+import { ToastContainer, toast } from 'react-toastify';
 const SeatSelection = () => {
     const { id } = useParams();
     const [seats, setSeats] = useState([]);
     const [schedule, setSchedule] = useState([]);
     const [selectedSeats, setSelectedSeats] = useState([]);
-    const [bill, setBill] = useState([]);
     const [vnpay, setVnPay] = useState();
-    const [open, setOpen] = useState(false);
-    const [status, setStatus] = useState('0');
-
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
     const config = {
         headers: { 
             'Authorization': `Bearer ${localStorage.getItem('token')}` 
@@ -46,11 +39,7 @@ const SeatSelection = () => {
     }
 
     const postSeats = async () => {
-       
-        // console.log(selectedSeats);
-        const result = await axios.post(`http://localhost:8080/api/bill/makeBill`, selectedSeats, config);
-        console.log(result.data);
-        setBill(result.data);
+        await axios.post(`http://localhost:8080/api/bill/makeBill`, selectedSeats, config);
     }
 
     const getVNPurl = async () => {
@@ -59,34 +48,89 @@ const SeatSelection = () => {
         setVnPay(result.data);
     }
 
-    const getVNPresponse = async () => {
-        const result = await axios.get('http://localhost:8080/api/vnpay/respond', config);
-        setStatus(result.status);
+    const handleSucceedPaid = () => {
+        localStorage.removeItem("isPaid");
+        toast.success('Thanh toán thành công', {
+            style: {
+                backgroundColor: '#162A28', 
+            },
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        }); 
+    }
+
+    const handleFailedPaid = () => {
+        localStorage.removeItem("isPaid");
+        setSelectedSeats('');
+        toast.error('Thanh toán thất bại', {
+            style: {
+                backgroundColor: '#162A28', 
+            },
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "dark",
+            progress: undefined,
+        });
     }
 
     useEffect(() => {
         loadSchedule();
         loadSeats();
-        // getVNPresponse();
+
+        const isPaid = localStorage.getItem('isPaid');
+
+        if (isPaid === 'TRUE') {
+            handleSucceedPaid();
+            
+        } else if (isPaid === 'FALSE') {
+            handleFailedPaid();
+        }
+
+        
     });
 
     const handleChange = (seatId) => (event) => {
         if (event.target.checked) {
-        setSelectedSeats([...selectedSeats, seatId]);
+            if(selectedSeats.length < 10) setSelectedSeats([...selectedSeats, seatId]);
+            else {
+                toast.error('Chỉ được chọn tối đa 10 ghế', {
+                    style: {
+                        backgroundColor: '#162A28', 
+                    },
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    theme: "dark",
+                    draggable: true,
+                    progress: undefined,
+                });
+                return;
+            }
         } else {
         setSelectedSeats(selectedSeats.filter(id => id !== seatId));
         }
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        postSeats();
-        
+        await postSeats(); 
+        await getVNPurl(); 
+        window.open(vnpay, '_blank', 'noopener noreferrer');
     };
-
+        
     const rows = 5;
     const seatsPerRow = 8;
-    const rowLabels = ['A', 'B', 'C', 'D', 'E'];
     return (
         <>
         <Typography
@@ -97,6 +141,7 @@ const SeatSelection = () => {
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'center',
+                // alignItems: 'center',
                 backgroundColor: '#162A28'
             }}
         >
@@ -104,106 +149,87 @@ const SeatSelection = () => {
             <div
                 style={{
                     width: '600px',
-                    display: 'block',
-                    boxSizing: 'border-box'
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#162A28'
                 }}
             >
                 <div >
                     <img
                         src="https://www.bhdstar.vn/wp-content/assets/loodo/seatMapHeader.png"
                         alt='Screen'
-                        width='500px'
+                        width='100%'
                     />
-                </div> 
-                <Box
-                    style={{
-                        marginTop:'20px', 
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        // height: '100px', 
-                        width: '480px',
-                        marginBottom: '20px'
-                    }}
-                >
-                    <Typography sx={{color: 'white'}}>
-                        <ChairIcon sx={{color:'white', mr: 1}} />
-                        Ghế trống 
-                    </Typography>
-                    <Typography sx={{color: 'white'}} > 
-                        <ChairIcon sx={{color:'blue', mr: 1}} />
-                        Ghế đang chọn 
-                    </Typography>
-                
+
+                    <Box
+                        style={{
+                            width: '95%',
+                            marginTop:'20px', 
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            marginBottom: '20px'
+                        }}
+                    >
+                        <Typography sx={{color: 'white'}}>
+                            <ChairIcon sx={{color:'white', mr: 1}} />
+                            Ghế trống 
+                        </Typography>
+                        <Typography sx={{color: 'white'}} > 
+                            <ChairIcon sx={{color:'blue', mr: 1}} />
+                            Ghế đang chọn 
+                        </Typography>
                     
-                    <Typography sx={{color: 'white'}} > 
-                        <ChairIcon sx={{color:'red', mr: 1}} />
-                        Ghế đã bán 
-                    </Typography>
-                
-                </Box>
-                <Box  
-                    sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', ml:2}}
-                >
-                <form 
-                    onSubmit={handleSubmit}
-                    style={{
-                        marginBottom: '20px',
-                    }}
-                >
-                    <Grid container spacing={2} >
-                    {[...Array(rows)].map((_, rowIndex) => (
-                        <Grid container item spacing={1} alignItems="center" key={rowIndex}>
-                            <Grid item>
-                                <h2 style={{marginRight: '10px', color:'#48BA1C'}}>{rowLabels[rowIndex]}</h2>
-                            </Grid>
+                        
+                        <Typography sx={{color: 'white'}} > 
+                            <ChairIcon sx={{color:'red', mr: 1}} />
+                            Ghế đã bán 
+                        </Typography>
+                    
+                    </Box>
+
+                    
+                    <Box 
+                        sx={{
+                            marginBottom: '20px',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: '100%',
+                           
+                        }}
+                    >
+                        <div>
+                        {[...Array(rows)].map((_, rowIndex) => (
+                        <Grid container item spacing={2} alignItems="center" key={rowIndex}>
+                                
                             {seats.slice(rowIndex * seatsPerRow, rowIndex * seatsPerRow + seatsPerRow).map((seat, seatIndex) => (
-                            <Grid item key={seat.id}>
-                            {!seat.isOccupied 
-                            ? 
-                                <FormControlLabel
-                                    control={
+                                <Grid item key={seat.id}>
+                                {!seat.isOccupied 
+                                ? 
                                     <Checkbox
                                         icon={<ChairIcon sx={{color:'white'}} />}
                                         checkedIcon={<ChairIcon sx={{color:'blue'}} />}
                                         checked={selectedSeats.includes(seat.seatId)}
                                         onChange={handleChange(seat.seatId)}
                                     />
-                                    }
-                                
-                                />
-                            : 
-                                <FormControlLabel
-                                    control={
+                                : 
                                     <Checkbox 
                                         icon={<ChairIcon sx={{color:'red'}} />}
                                         disabled
                                     />
-                                    }
-                                />
-                            }
-                            
-                            </Grid>
-                        ))}
-                        </Grid>
-                    ))}
-                    </Grid>
+                                }
 
-                    <Box
-                        sx={{
-                            mt: 2,
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            width: '500px',
-                            mb:2,
-                        }}
-                    >
-                        <Button type="submit" sx={{backgroundColor: '#25C5AB', color: 'white', width: '20vh', mt:2}}
-                            onClick={handleOpen}
-                        >Tiếp tục</Button>
+                                
+                                
+                                </Grid>
+                            ))}
+                        </Grid>                            
+                        ))}
+                        </div> 
                     </Box>
-                </form>
-                </Box>
+                </div> 
+                
             </div>
             
             <div>
@@ -212,13 +238,14 @@ const SeatSelection = () => {
                         border: '1px solid #25C5AB',
                         padding: '20px',
                         borderRadius: '20px',
-                        width: '380px',
+                        // width: '380px',
                         // height: '500px',
                         backgroundColor: '#162A28',
                         display: 'flex',
                         justifyContent: 'left',
                         alignItems: 'left',
                         flexDirection: 'column',
+                        ml:2
                     }}
                 >
                     <Typography variant='h3' sx={{color:'white'}}>
@@ -241,7 +268,7 @@ const SeatSelection = () => {
                                 style={{ display: 'flex', flexDirection: 'row' }}
                             >
                                 {selectedSeats.map(seat => (
-                                <Typography  style={{color:'white', marginRight: '5px'}} key={seat.id}>
+                                <Typography  style={{color:'white', marginRight: '5px', fontSize:'20px'}} key={seat.id}>
                                     {findSeatNameById(seat)}
                                 </Typography>
                                 ))}
@@ -252,100 +279,32 @@ const SeatSelection = () => {
                                 {schedule.price * selectedSeats.length }VND
                             </Typography>
 
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleSubmit}
+                                sx={{
+                                    marginLeft: '180px',
+                                    border: '1px solid #25C5AB',
+                                    backgroundColor: '#162A28',
+                                    color: 'white',
+                                    marginTop: '20px',
+                                    marginBottom: '20px',
+                                    borderRadius: '20px',
+                                    '&:hover':{backgroundColor: '#25C5AB'}
+                                }}
+                            >Thanh toán</Button>
+
                         </div>
                         :
-                        <Typography variant='h6' sx={{color:'blue'}}>Vui lòng chọn ghế</Typography>
+                        <Typography variant='h6' sx={{color:'#25C5AB', font: '20px'}}>Vui lòng chọn ghế!!!</Typography>
                     }
 
                 </Box>
             </div>
         </div>
 
-        <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-
-        >
-            <Box 
-                sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 700,
-                boxShadow: 24,
-                backgroundColor: "#074C45",
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                textAlign: 'left',
-                borderRadius: '10px',
-                padding: '20px',
-                }}
-            >
-                <Button 
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'right',
-                        color:'white'
-                    }}
-                    onClick={handleClose}>
-                        <CancelIcon/>
-                </Button>
-                <Typography variant='h2' sx={{color:'white'}}>Thông tin hóa đơn</Typography>
-                <Typography variant='h6' sx={{color:'white'}}>{bill.createdTime} </Typography>
-                <Divider sx={{border: '1px solid #25C5AB ', mb: 2, mt: 2}}/>
-                <Typography variant='h4' sx={{color:'white'}}>Tài khoản đặt: {bill.userName}</Typography>
-                <Typography variant='h4' sx={{color:'white'}}>Phim: {bill.movieName}</Typography>
-                <Typography variant='h4' sx={{color:'white'}}>{bill.roomName} - {bill.showTime} - {bill.date}</Typography>
-                <Typography variant='h4' sx={{color:'white'}}>
-                    Danh sách ghế: {bill.listSeatName && bill.listSeatName.map((seat, index) => ( 
-                        <span style={{marginRight: '5px'}} key={index}>{seat} </span>
-                    ))}
-                </Typography>
-                <Divider sx={{border: '1px solid #25C5AB ', mb: 2, mt: 2}}/>
-                <Typography variant='h3' sx={{color:'blue'}}>Tổng tiền: {bill.totalPrice} VND</Typography>
-
-                <Button
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        padding: '10px',
-                        mt: 4,
-                        width:'200px',
-                        height:'30px',
-                        borderRadius:'20px',
-                        '&:hover': {
-                            backgroundColor: 'blue',
-                        }
-                    }}
-                >
-                    <a 
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        width:'200px',
-                        color: '#25C5AB',
-                        fontWeight: 'bold',
-                        fontSize: '15px',
-                    }}
-                    onClick={(e) => {
-                        e.preventDefault(); 
-                        getVNPurl();
-                        window.open(vnpay, '_blank', 'noopener noreferrer'); // Mở link trong tab mới
-                    }}
-                     href={vnpay} target="_blank" rel="noopener noreferrer">Thanh toán</a>
-                </Button>  
-
-                
-            </Box>
-            
-            
-
-        </Modal>
+        <ToastContainer/>
     </>
 
   );

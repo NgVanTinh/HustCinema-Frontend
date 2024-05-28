@@ -71,7 +71,7 @@ const MovieDetail = () => {
           left: 0,
           width: '100%',
           height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.6)', // Màu đen semi-transparent
+          backgroundColor: 'rgba(0, 0, 0, 0.6)', 
         }}
       ></div>
 
@@ -170,6 +170,7 @@ const MovieDetail = () => {
       <Button 
         sx={{
           color: '#25C5AB',
+          backgroundColor: selectedDate === today ? '#73807E' : '#080505',
           '&:hover': {
           backgroundColor: '#73807E',
           },

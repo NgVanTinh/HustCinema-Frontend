@@ -1,6 +1,6 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -17,14 +17,21 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 const NavBar = () => {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const navigate = useNavigate();
-
-
+    
+    const location = useLocation();
+    const path = location.pathname.replace('/', '');
+    const [selectedButton, setSelectedButton] = useState(path);
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
 
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
+    };
+
+    const handleButtonClick = (path, buttonKey) => {
+        navigate(path);
+        setSelectedButton(buttonKey);
     };
 
     return (
@@ -61,22 +68,24 @@ const NavBar = () => {
                         display: { xs: 'none', md: 'flex' } }}>
                         
                         <Button
-                            key='home'
-                            onClick={() => {navigate('/')}}
-                            sx={{ ml: 2,my: 2, color: 'white', display: 'block',
+                            key=''
+                            onClick={() => { handleButtonClick('/', '')}}
+                            sx={{ ml: 2,my: 2, display: 'block',
+                            color: selectedButton === '' ? '#22AD97' : 'white',
                             '&:hover': {
-                                color: '#25C5AB' /* Thay đổi màu nền khi hover */
+                                color: '#25C5AB' 
                             } }}
                         >
                             Trang chủ
                         </Button>
 
                         <Button
-                            key='schedule'
-                            onClick={() => {navigate('/schedules')}}
-                            sx={{ ml: 2,my: 2, color: 'white', display: 'block',
+                            key='schedules'
+                            onClick={() => {handleButtonClick('/schedules', 'schedules')}}
+                             sx={{ ml: 2,my: 2, display: 'block',
+                            color: selectedButton === 'schedules' ? '#22AD97' : 'white',
                             '&:hover': {
-                                color: '#25C5AB' /* Thay đổi màu nền khi hover */
+                                color: '#25C5AB' 
                             } }}
                         >
                             Lịch chiếu
@@ -84,10 +93,11 @@ const NavBar = () => {
 
                         <Button
                             key='about-us'
-                            onClick={() => {navigate('/about-us')}}
-                            sx={{ ml: 2,my: 2, color: 'white', display: 'block',
+                            onClick={() => {handleButtonClick('/about-us', 'about-us')}}
+                             sx={{ ml: 2,my: 2, display: 'block',
+                            color: selectedButton === 'about-us' ? '#22AD97' : 'white',
                             '&:hover': {
-                                color: '#25C5AB' /* Thay đổi màu nền khi hover */
+                                color: '#25C5AB' 
                             } }}
                         >
                             Giới thiệu
@@ -139,6 +149,14 @@ const NavBar = () => {
                                     onClick={() => navigate('/profile')}
                                 >
                                     <p>Thông tin cá nhân</p>
+                                </Button>
+                            </MenuItem>
+
+                            <MenuItem key='profile' onClick={handleCloseUserMenu} >
+                                <Button 
+                                    onClick={() => navigate('/my-bill')}
+                                >
+                                    <p>Lịch sử mua vé</p>
                                 </Button>
                             </MenuItem>
                         </Menu>
