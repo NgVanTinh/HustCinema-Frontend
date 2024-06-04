@@ -72,7 +72,7 @@ const Schedules = () => {
                 },
                 ml:2, mr:2,
                 border: '1px solid #25C5AB',
-                borderRadius:'30px',
+                borderRadius:'10px',
                 }}
                 onClick={() => {
                 setSelectedDate(today);
@@ -91,7 +91,7 @@ const Schedules = () => {
                     backgroundColor: '#73807E',
                 },
                 border: '1px solid #25C5AB',
-                borderRadius:'30px',
+                borderRadius:'10px',
                 ml:2, mr:2,
                 }}
                 onClick={() => {
@@ -111,7 +111,7 @@ const Schedules = () => {
                     backgroundColor: '#73807E',
                 },
                 border: '1px solid #25C5AB',
-                borderRadius:'30px',
+                borderRadius:'10px',
                 ml:2, mr:2,
                 }}
                 onClick={() => {
@@ -165,7 +165,7 @@ const Schedules = () => {
                                     <div
                                     key={index}
                                     style={{
-                                        marginRight: '10px',
+                                        marginRight: '5px',marginBottom: '5px'
                                     }}
                                     >
                                     <Button
@@ -175,7 +175,7 @@ const Schedules = () => {
                                             borderRadius: '20px',
                                             '&:hover': {
                                                 backgroundColor: '#73807E',
-                                            }
+                                            },
                                         }}
                                         onClick={() => {
                                             if (localStorage.getItem('token')) {
@@ -185,7 +185,7 @@ const Schedules = () => {
                                             }
                                         }}
                                     >
-                                        {schedule.showTime}
+                                        <Typography variant='h7'>{schedule.showTime}</Typography>
                                     </Button>
                                     </div>
                                 )

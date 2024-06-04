@@ -1,14 +1,12 @@
-import * as React from 'react';
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
@@ -25,30 +23,31 @@ const Login = () => {
       userName: data.get('userName'),
       password: data.get('password'),
     });
-    // login(data.get('userName'), data.get('password'));
+
     await axios.post(`http://localhost:8080/api/auth/login`, {userName: data.get('userName'), password: data.get('password')})
-    .then(function (response) {
+      .then((response) => {
                 localStorage.setItem("user", JSON.stringify(response.data.user));
                 console.log(response.data.user);
                 localStorage.setItem("token", response.data.token);
 
                 navigate("/");
                 
-            })
-            .catch(function (error) {
-                console.log(error.response.data)
+      })
+      .catch((error) => {
+       
+            console.log(error.response.data)
 
-                toast.error(`${error.response.data}`, {
-                position: "top-center",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-                });
+            toast.error(`${error.response.data}`, {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
             });
+      });
   };
 
   return (
@@ -119,6 +118,8 @@ const Login = () => {
           </Box>
         </Box>
       </div>
+
+      <ToastContainer/>
     </>
      
   );

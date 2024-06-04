@@ -10,10 +10,11 @@ import NavBar from './layouts/Navbar/NavBar';
 import AppFooter from './layouts/Footer/AppFooter';
 import MovieDetail from './pages/MovieDetail/MovieDetail';
 import SeatSelection from './pages/SeatSelection/SeatSelection';
-import Bill from './pages/Bill/Bill';
+import Profile from './pages/Proflie/profile';
 import SaveBill from './pages/SaveBill/Savebill';
 
 import Schedules from './pages/Schedules/Schedules';
+import AboutUs from './pages/AboutUs/AboutUs';
 const { Content, Footer } = Layout;
 
 
@@ -49,8 +50,9 @@ function AppContent() {
           <Route path='movie/:id' element={<MovieDetail />} />
           <Route path='seat-selection/:id' element={<SeatSelection />} />
           <Route path='schedules' element={<Schedules />} />
-          <Route path='my-bill' element={<Bill />} />
           <Route path='savebill' element={<SaveBill />} />
+          <Route path='my-profile' element={<Profile />} />
+          <Route path='about-us' element={<AboutUs />} />
         </Routes>
       </Content>
       {!hideNavAndFooter && (

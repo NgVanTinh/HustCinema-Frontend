@@ -54,33 +54,24 @@ const MovieDetail = () => {
     <>
     <div className='container' 
       style={{
-        height: '100vh',
-        justifyContent: 'center',
-        alignItems: 'center',
+        minHeight: '100vh', 
         display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center', 
         backgroundImage: `url(${movie.posterURL})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        paddingTop: '20px', 
+        marginTop: 0
       }}
     >
-      <div
-        className="overlay"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.6)', 
-        }}
-      ></div>
 
       <Card 
         sx={{ 
           display: 'flex', 
-          filter:'brightness(0.9)',
+          filter:'brightness(0.8)',
           boxShadow: '0px 0px 10px 0px #E5FBF7', 
-          borderRadius: '20px'
+          borderRadius: '20px',
          }}
       >
           <Box sx={{ display: 'flex', alignItems: 'center'}}>
@@ -108,14 +99,14 @@ const MovieDetail = () => {
             >
               <p style={{fontSize: '35px', fontWeight: 'bold'}}>{movie ? movie.movieName : null}</p>
               <p> 
-                <span style={{marginRight: '20px'}}>{movie ? movie.categories : null}</span> 
-                <span>{movie ? movie.length : null}phút</span> 
+                <span style={{marginRight: '20px', color: 'grey'}}>{movie ? movie.categories : null}</span> 
+                <span style={{color: 'grey'}}>{movie ? movie.length : null}phút</span> 
               </p>
-              <p>Đạo diễn: {movie ? movie.directors : null}</p>
-              <p>Diễn viên: {movie ? movie.actors : null}</p>
+              <div> <b>Đạo diễn: </b> {movie ? movie.directors : null}</div>
+              <div> <b>Diễn viên: </b>{movie ? movie.actors : null}</div>
   
-              <p>Khởi chiếu: {movie ? movie.releaseDate : null} </p> 
-              <p>{movie ? movie.description : null}</p>
+              <div style={{marginBottom: '10px'}}> <b>Khởi chiếu: </b> {movie ? movie.releaseDate : null} </div> 
+              <p style={{fontSize:'15px'}}>{movie ? movie.description : null}</p>
               
             </CardContent>
             <CardActions>
@@ -162,7 +153,7 @@ const MovieDetail = () => {
       sx={{ 
         display: 'flex', 
         justifyContent: 'center', 
-        height: '100px', 
+        minHeight: '100px', 
         width: '100%',
         backgroundColor: '#080505',        
       }}

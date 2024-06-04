@@ -13,23 +13,31 @@ const Savebill = () => {
     };
 
     const saveBill = async() => {
-        await axios.get(`http://localhost:8080/api/bill/saveBill`, config);
+        const result = await axios.get(`http://localhost:8080/api/bill/saveBill`, config);
+        console.log(result.data);
     }
 
-    if (vnpResponseCode === '00') {
-        saveBill();
-        localStorage.setItem('isPaid', 'TRUE');
-    } 
-    else {
-        localStorage.setItem('isPaid', 'FALSE');
-    }
     
     useEffect(() => {
+        const processPayment = async () => {
+            if (vnpResponseCode === '00') {
+                await saveBill();
+                localStorage.setItem('isPaid', 'TRUE');
+            } else {
+                localStorage.setItem('isPaid', 'FALSE');
+            }
+            window.close();
+            };
 
-    window.close();
-    }, []);
+            processPayment();
+    }, [vnpResponseCode]);
 
-    return null;
+    // return null;
+    return(
+        <div>
+            <h1>Đã thanh toán</h1>
+        </div>
+    )
 };
 
 export default Savebill;

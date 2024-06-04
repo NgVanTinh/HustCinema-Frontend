@@ -117,7 +117,7 @@ const NavBar = () => {
                         </IconButton>
                         
                         <Menu
-                            sx={{ mt: '45px' }}
+                            sx={{ mt: '45px'}}
                             id="menu-appbar"
                             anchorEl={anchorElUser}
                             anchorOrigin={{
@@ -132,6 +132,15 @@ const NavBar = () => {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
+                            
+                            <MenuItem key='profile' onClick={handleCloseUserMenu} >
+                                <Button 
+                                    onClick={() => navigate('/my-profile')}
+                                    sx={{color: '#25C5AB'}}
+                                >
+                                    Thông tin cá nhân
+                                </Button>
+                            </MenuItem>
                             <MenuItem key='logout' onClick={handleCloseUserMenu}>
                                 <Button 
                                     onClick={() => {
@@ -139,26 +148,13 @@ const NavBar = () => {
                                         localStorage.removeItem('user');
                                         navigate('/');
                                     }}
+
+                                    sx={{color: '#25C5AB'}}
                                 >
-                                    <p>Đăng xuất</p>
+                                    Đăng xuất
                                 </Button>
                             </MenuItem>
 
-                            <MenuItem key='profile' onClick={handleCloseUserMenu} >
-                                <Button 
-                                    onClick={() => navigate('/profile')}
-                                >
-                                    <p>Thông tin cá nhân</p>
-                                </Button>
-                            </MenuItem>
-
-                            <MenuItem key='profile' onClick={handleCloseUserMenu} >
-                                <Button 
-                                    onClick={() => navigate('/my-bill')}
-                                >
-                                    <p>Lịch sử mua vé</p>
-                                </Button>
-                            </MenuItem>
                         </Menu>
                     </Box>
                     :
