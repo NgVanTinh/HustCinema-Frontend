@@ -5,6 +5,9 @@ import axios from 'axios';
 import ChairIcon from '@mui/icons-material/Chair';
 import Divider from '@mui/material/Divider';
 import { ToastContainer, toast } from 'react-toastify';
+
+import CountdownTimer from '../../components/CountdownTimer';
+
 const SeatSelection = () => {
     const { id } = useParams();
     const [seats, setSeats] = useState([]);
@@ -329,7 +332,7 @@ const SeatSelection = () => {
                                     display: 'flex',
                                     justifyContent: 'right',                                   
                                     marginTop: '20px',
-                                    marginBottom: '20px',
+                                    marginBottom: '10px',
                                 }}
                             >
                                 <Button
@@ -351,8 +354,10 @@ const SeatSelection = () => {
                         :
                         <Typography variant='h6' sx={{color:'#25C5AB', font: '20px'}}>Vui lòng chọn ghế!!!</Typography>
                     }
-
+                    <CountdownTimer scheduleId={id}/>
                 </Box>
+
+                
             </div>
         </div>
 
